@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maggie & Mr. Jarvis – Listening Exercise</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf7f2;
+    --card: #ffffff;
+    --ink: #1c1917;
+    --muted: #78716c;
+    --border: #e7e2d9;
+    --primary: #c2410c;
+    --primary-light: #fff0eb;
+    --green: #15803d;
+    --green-light: #dcfce7;
+    --red: #b91c1c;
+    --red-light: #fee2e2;
+    --gold: #b45309;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.10);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,.12);
+    --r: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 32px 16px 72px;
+  }
+
+  /* ── HEADER ── */
+  .page-header {
+    max-width: 720px;
+    margin: 0 auto 36px;
+  }
+
+  .tag-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 99px;
+  }
+
+  .tag-orange { background: var(--primary); color: #fff; }
+  .tag-outline { border: 1.5px solid var(--border); color: var(--muted); }
+
+  .page-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  .page-header h1 span { color: var(--primary); }
+
+  .page-header p {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.7;
+    max-width: 560px;
+  }
+
+  /* ── AUDIO PLAYER ── */
+  .audio-card {
+    max-width: 720px;
+    margin: 0 auto 28px;
+    background: var(--ink);
+    border-radius: var(--r);
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .play-btn {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: transform .15s, background .15s;
+  }
+
+  .play-btn:hover { background: #9a3412; transform: scale(1.07); }
+
+  .audio-meta { flex: 1; min-width: 0; }
+
+  .audio-name {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .progress-row { display: flex; align-items: center; gap: 10px; }
+
+  .progress-track {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,.2);
+    border-radius: 99px;
+    cursor: pointer;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 99px;
+    width: 0%;
+    transition: width .1s linear;
+  }
+
+  .audio-time { color: rgba(255,255,255,.5); font-size: 11px; font-weight: 600; white-space: nowrap; }
+
+  /* ── CARDS ── */
+  .ex-wrap { max-width: 720px; margin: 0 auto 24px; }
+
+  .ex-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--r);
+    padding: 28px 26px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .ex-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1.5px solid var(--border);
+  }
+
+  .ex-num {
+    width: 34px; height: 34px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .ex-meta h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .ex-meta p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .ex-meta .example-note {
+    margin-top: 6px;
+    font-style: italic;
+    color: var(--gold);
+    font-size: 12.5px;
+  }
+
+  /* ── EXERCISE 1: drag to fill ── */
+  .question-pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    background: var(--bg);
+    border: 1.5px dashed var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 22px;
+    min-height: 52px;
+  }
+
+  .q-chip {
+    background: var(--primary);
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 13px;
+    border-radius: 99px;
+    cursor: grab;
+    user-select: none;
+    transition: transform .12s, opacity .15s, box-shadow .12s;
+    box-shadow: 0 2px 6px rgba(194,65,12,.25);
+  }
+
+  .q-chip:active { cursor: grabbing; }
+  .q-chip.dragging { opacity: .4; transform: scale(1.05); }
+  .q-chip.used { opacity: .3; pointer-events: none; }
+
+  .qa-list { display: flex; flex-direction: column; gap: 14px; }
+
+  .qa-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: start;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+
+  .qa-row .num-dot {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: .5px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .drop-q {
+    min-width: 120px;
+    height: 36px;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    padding: 0 10px;
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
+    align-self: start;
+    margin-top: 4px;
+  }
+
+  .drop-q.over { border-color: var(--primary); background: var(--primary-light); }
+
+  .drop-q.filled {
+    background: var(--primary);
+    color: #fff;
+    border-style: solid;
+    border-color: var(--primary);
+  }
+
+  .drop-q .rm {
+    display: none;
+    position: absolute;
+    right: -7px; top: -7px;
+    width: 17px; height: 17px;
+    background: var(--red);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 10px;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    line-height: 1;
+  }
+
+  .drop-q.filled .rm { display: flex; }
+
+  .answer-text {
+    font-size: 13.5px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .answer-text strong { color: var(--ink); font-style: normal; }
+
+  /* ── EXERCISE 2: matching ── */
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .match-col-header {
+    background: var(--ink);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    text-align: center;
+  }
+
+  .match-left-col, .match-right-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .match-left-col { border-right: 1.5px solid var(--border); }
+
+  .match-left-item {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 58px;
+  }
+
+  .match-left-item:last-child { border-bottom: none; }
+
+  .match-left-item .mn {
+    width: 22px; height: 22px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .match-right-item {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 58px;
+  }
+
+  .match-right-item:last-child { border-bottom: none; }
+
+  .match-input {
+    width: 48px; height: 34px;
+    border: 2px solid var(--border);
+    border-radius: 7px;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--bg);
+    outline: none;
+    flex-shrink: 0;
+    transition: border-color .15s;
+  }
+
+  .match-input:focus { border-color: var(--primary); background: var(--primary-light); }
+
+  /* ── SUBMIT ── */
+  .submit-area {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .btn-check {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 48px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(194,65,12,.3);
+    transition: transform .15s, box-shadow .15s, background .15s;
+  }
+
+  .btn-check:hover { background: #9a3412; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(194,65,12,.35); }
+
+  /* ── SCORE PANEL ── */
+  #score-panel {
+    display: none;
+    max-width: 720px;
+    margin: 24px auto 0;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--r);
+    padding: 32px 28px;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    animation: popUp .4s cubic-bezier(.34,1.56,.64,1);
+  }
+
+  @keyframes popUp {
+    from { opacity: 0; transform: translateY(24px) scale(.97); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .score-circle {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    border: 4px solid var(--primary);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+
+  .score-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+  }
+
+  .score-sub { font-size: 11px; font-weight: 600; color: var(--muted); }
+
+  .score-detail { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
+
+  .score-pills { display: flex; gap: 12px; justify-content: center; margin-bottom: 20px; }
+
+  .s-pill {
+    padding: 6px 18px;
+    border-radius: 99px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  .s-pill.ok { background: var(--green); }
+  .s-pill.no { background: var(--red); }
+
+  .feedback {
+    font-family: 'Playfair Display', serif;
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--ink);
+  }
+
+  .btn-retry {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    border-radius: 8px;
+    padding: 10px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+
+  .btn-retry:hover { background: var(--primary); color: #fff; }
+
+  /* Feedback colors */
+  .drop-q.ans-ok { background: var(--green); border-color: var(--green); color: #fff; }
+  .drop-q.ans-no { background: var(--red); border-color: var(--red); color: #fff; }
+  .match-input.ans-ok { border-color: var(--green); background: var(--green-light); color: var(--green); }
+  .match-input.ans-no { border-color: var(--red); background: var(--red-light); color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="tag-row">
+    <span class="tag tag-orange">🎧 Listening</span>
+    <span class="tag tag-outline">Elementary</span>
+  </div>
+  <h1>Maggie &amp; <span>Mr. Jarvis</span></h1>
+  <p>A mother meets her son's English teacher at a school evening. Listen to the audio and complete both exercises below.</p>
+</div>
+
+<!-- AUDIO PLAYER -->
+<div class="audio-card">
+  <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶</button>
+  <div class="audio-meta">
+    <div class="audio-name">🎵 Maggie & Mr. Jarvis – Parent-Teacher Meeting</div>
+    <div class="progress-row">
+      <div class="progress-track" id="progressTrack" onclick="seekAudio(event)">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <span class="audio-time" id="audioTime">0:00 / 0:00</span>
+    </div>
+  </div>
+</div>
+<!-- Ganti nama file audio di bawah -->
+<audio id="mainAudio" src="maggie-jarvis.mp3"></audio>
+
+<!-- ═══════════════════════════════════
+     EXERCISE 1 – DRAG QUESTION TO FILL
+════════════════════════════════════ -->
+<div class="ex-wrap">
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">1</div>
+      <div class="ex-meta">
+        <h2>Put the Correct Question</h2>
+        <p>Listen and drag the correct question from the box into each space. Then listen again to check.</p>
+      </div>
+    </div>
+
+    <!-- Question bank -->
+    <div id="q-bank">
+      <div class="q-chip" draggable="true" data-q="Why didn't Billy do his best work last year?">Why didn't Billy do his best work last year?</div>
+      <div class="q-chip" draggable="true" data-q="What did Mr. Jarvis publish in the school newspaper?">What did Mr. Jarvis publish in the school newspaper?</div>
+      <div class="q-chip" draggable="true" data-q="Why was Maggie surprised about the newspaper?">Why was Maggie surprised about the newspaper?</div>
+      <div class="q-chip" draggable="true" data-q="What problem does Billy still have?">What problem does Billy still have?</div>
+      <div class="q-chip" draggable="true" data-q="How does Billy's sister help him at home?">How does Billy's sister help him at home?</div>
+      <div class="q-chip" draggable="true" data-q="What does Mr. Jarvis think Billy may have?">What does Mr. Jarvis think Billy may have?</div>
+      <div class="q-chip" draggable="true" data-q="What does Mr. Jarvis want to arrange for Billy?">What does Mr. Jarvis want to arrange for Billy?</div>
+    </div>
+
+    <div class="qa-list">
+
+      <div class="qa-row">
+        <div>
+          <div class="num-dot">Q 1</div>
+          <div class="drop-q" data-answer="Why didn't Billy do his best work last year?" data-id="dq1">
+            drag question here
+            <span class="rm" onclick="removeQ(this)">✕</span>
+          </div>
+        </div>
+        <div>
+          <div class="num-dot">A</div>
+          <div class="answer-text">They had just moved from Los Angeles and it wasn't a settled time for the family.</div>
+        </div>
+      </div>
+
+      <div class="qa-row">
+        <div>
+          <div class="num-dot">Q 2</div>
+          <div class="drop-q" data-answer="What did Mr. Jarvis publish in the school newspaper?" data-id="dq2">
+            drag question here
+            <span class="rm" onclick="removeQ(this)">✕</span>
+          </div>
+        </div>
+        <div>
+          <div class="num-dot">A</div>
+          <div class="answer-text">A story Billy wrote back in March.</div>
+        </div>
+      </div>
+
+      <div class="qa-row">
+        <div>
+          <div class="num-dot">Q 3</div>
+          <div class="drop-q" data-answer="Why was Maggie surprised about the newspaper?" data-id="dq3">
+            drag question here
+            <span class="rm" onclick="removeQ(this)">✕</span>
+          </div>
+        </div>
+        <div>
+          <div class="num-dot">A</div>
+          <div class="answer-text">Because Billy is very modest and never showed her his work.</div>
+        </div>
+      </div>
+
+      <div class="qa-row">
+        <div>
+          <div class="num-dot">Q 4</div>
+          <div class="drop-q" data-answer="What problem does Billy still have?" data-id="dq4">
+            drag question here
+            <span class="rm" onclick="removeQ(this)">✕</span>
+          </div>
+        </div>
+        <div>
+          <div class="num-dot">A</div>
+          <div class="answer-text">He has enormous difficulties with his spelling.</div>
+        </div>
+      </div>
+
+      <div class="qa-row">
+        <div>
+          <div class="num-dot">Q 5</div>
+          <div class="drop-q" data-answer="How does Billy's sister help him at home?" data-id="dq5">
+            drag question here
+            <span class="rm" onclick="removeQ(this)">✕</span>
+          </div>
+        </div>
+        <div>
+          <div class="num-dot">A</div>
+          <div class="answer-text">Kathy tests him on words that he often gets wrong.</div>
+        </div>
+      </div>
+
+      <div class="qa-row">
+        <div>
+          <div class="num-dot">Q 6</div>
+          <div class="drop-q" data-answer="What does Mr. Jarvis think Billy may have?" data-id="dq6">
+            drag question here
+            <span class="rm" onclick="removeQ(this)">✕</span>
+          </div>
+        </div>
+        <div>
+          <div class="num-dot">A</div>
+          <div class="answer-text">A mild form of dyslexia.</div>
+        </div>
+      </div>
+
+      <div class="qa-row">
+        <div>
+          <div class="num-dot">Q 7</div>
+          <div class="drop-q" data-answer="What does Mr. Jarvis want to arrange for Billy?" data-id="dq7">
+            drag question here
+            <span class="rm" onclick="removeQ(this)">✕</span>
+          </div>
+        </div>
+        <div>
+          <div class="num-dot">A</div>
+          <div class="answer-text">An appointment with a specialist early next week.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     EXERCISE 2 – MATCHING
+════════════════════════════════════ -->
+<div class="ex-wrap">
+  <div class="ex-card">
+    <div class="ex-header">
+      <div class="ex-num">2</div>
+      <div class="ex-meta">
+        <h2>Match the Two Halves</h2>
+        <p>Match each subject on the left with the correct description on the right. Write the correct number in each space.</p>
+        <p class="example-note">e.g. If you think "Billy" moved from Los Angeles, write '1' next to 'moved from Los Angeles'.</p>
+      </div>
+    </div>
+
+    <div class="match-grid">
+      <div class="match-col-header">Subject</div>
+      <div class="match-col-header">Description</div>
+
+      <div class="match-left-col">
+        <div class="match-left-item"><span class="mn">1</span> Billy</div>
+        <div class="match-left-item"><span class="mn">2</span> Billy's story</div>
+        <div class="match-left-item"><span class="mn">3</span> Billy's spelling</div>
+        <div class="match-left-item"><span class="mn">4</span> Kathy</div>
+        <div class="match-left-item"><span class="mn">5</span> Mr. Jarvis's son</div>
+        <div class="match-left-item"><span class="mn">6</span> The specialist appointment</div>
+        <div class="match-left-item"><span class="mn">7</span> Maggie</div>
+      </div>
+
+      <div class="match-right-col">
+        <div class="match-right-item">
+          <span>was published in the school newspaper</span>
+          <input class="match-input" type="number" min="1" max="7" data-answer="2" placeholder="?">
+        </div>
+        <div class="match-right-item">
+          <span>is Billy's sister who helps him study</span>
+          <input class="match-input" type="number" min="1" max="7" data-answer="4" placeholder="?">
+        </div>
+        <div class="match-right-item">
+          <span>is planned for early next week</span>
+          <input class="match-input" type="number" min="1" max="7" data-answer="6" placeholder="?">
+        </div>
+        <div class="match-right-item">
+          <span>has always been his weak point</span>
+          <input class="match-input" type="number" min="1" max="7" data-answer="3" placeholder="?">
+        </div>
+        <div class="match-right-item">
+          <span>is now a published author</span>
+          <input class="match-input" type="number" min="1" max="7" data-answer="5" placeholder="?">
+        </div>
+        <div class="match-right-item">
+          <span>will call the school office at 9 o'clock</span>
+          <input class="match-input" type="number" min="1" max="7" data-answer="7" placeholder="?">
+        </div>
+        <div class="match-right-item">
+          <span>is 12 years old and very modest</span>
+          <input class="match-input" type="number" min="1" max="7" data-answer="1" placeholder="?">
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SUBMIT -->
+<div class="submit-area">
+  <button class="btn-check" onclick="checkAll()">✓ Check Answers</button>
+</div>
+
+<!-- SCORE -->
+<div id="score-panel">
+  <div class="score-circle">
+    <div class="score-pct" id="sPct">0%</div>
+    <div class="score-sub">Score</div>
+  </div>
+  <div class="score-detail" id="sDetail"></div>
+  <div class="score-pills">
+    <div class="s-pill ok" id="sOk">0 ✓</div>
+    <div class="s-pill no" id="sNo">0 ✗</div>
+  </div>
+  <div class="feedback" id="sFeedback"></div>
+  <button class="btn-retry" onclick="resetAll()">↺ Try Again</button>
+</div>
+
+<script>
+// ── AUDIO ──
+const audio = document.getElementById('mainAudio');
+const playBtn = document.getElementById('playBtn');
+const progressFill = document.getElementById('progressFill');
+const audioTime = document.getElementById('audioTime');
+
+function toggleAudio() {
+  if (audio.paused) { audio.play(); playBtn.textContent = '⏸'; }
+  else { audio.pause(); playBtn.textContent = '▶'; }
+}
+
+audio.addEventListener('timeupdate', () => {
+  if (!audio.duration) return;
+  progressFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+  audioTime.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
+});
+
+audio.addEventListener('ended', () => { playBtn.textContent = '▶'; });
+
+function seekAudio(e) {
+  const r = document.getElementById('progressTrack').getBoundingClientRect();
+  audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+}
+
+function fmt(s) {
+  return Math.floor(s/60) + ':' + Math.floor(s%60).toString().padStart(2,'0');
+}
+
+// ── DRAG & DROP (Exercise 1) ──
+let dragged = null;
+
+document.querySelectorAll('.q-chip').forEach(chip => {
+  chip.addEventListener('dragstart', e => {
+    dragged = chip.dataset.q;
+    chip.classList.add('dragging');
+    e.dataTransfer.setData('text/plain', dragged);
+  });
+  chip.addEventListener('dragend', () => chip.classList.remove('dragging'));
+});
+
+document.querySelectorAll('.drop-q').forEach(zone => {
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('over');
+    if (!dragged) return;
+    if (zone.classList.contains('filled')) returnChip(zone.dataset.current);
+    zone.dataset.current = dragged;
+    zone.classList.add('filled');
+    zone.childNodes[0].textContent = dragged + ' ';
+    markChip(dragged, true);
+    dragged = null;
+  });
+});
+
+function returnChip(q) {
+  document.querySelectorAll('.q-chip').forEach(c => {
+    if (c.dataset.q === q) c.classList.remove('used');
+  });
+}
+
+function markChip(q, used) {
+  document.querySelectorAll('.q-chip').forEach(c => {
+    if (c.dataset.q === q) {
+      used ? c.classList.add('used') : c.classList.remove('used');
+    }
+  });
+}
+
+function removeQ(btn) {
+  const zone = btn.parentElement;
+  returnChip(zone.dataset.current);
+  zone.dataset.current = '';
+  zone.childNodes[0].textContent = 'drag question here ';
+  zone.classList.remove('filled', 'ans-ok', 'ans-no');
+}
+
+// ── CHECK ALL ──
+function checkAll() {
+  let correct = 0, total = 0;
+
+  document.querySelectorAll('.drop-q').forEach(zone => {
+    total++;
+    zone.classList.remove('ans-ok', 'ans-no');
+    const given = (zone.dataset.current || '').trim();
+    const ans = zone.dataset.answer.trim();
+    if (given === ans) { zone.classList.add('ans-ok'); correct++; }
+    else zone.classList.add('ans-no');
+  });
+
+  document.querySelectorAll('.match-input').forEach(inp => {
+    total++;
+    inp.classList.remove('ans-ok', 'ans-no');
+    if (inp.value.trim() === inp.dataset.answer) { inp.classList.add('ans-ok'); correct++; }
+    else inp.classList.add('ans-no');
+  });
+
+  const pct = Math.round(correct / total * 100);
+  document.getElementById('sPct').textContent = pct + '%';
+  document.getElementById('sDetail').textContent = `${correct} correct out of ${total} questions`;
+  document.getElementById('sOk').textContent = correct + ' ✓';
+  document.getElementById('sNo').textContent = (total - correct) + ' ✗';
+
+  const msgs = ['🎧 Listen again carefully and try once more!','📖 Keep practicing — you\'re getting there!','👍 Good work! A few more to go!','🎉 Great job! Almost there!','🏆 Perfect! Outstanding work!'];
+  document.getElementById('sFeedback').textContent = msgs[Math.min(4, Math.floor(pct / 20))];
+
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ── RESET ──
+function resetAll() {
+  document.querySelectorAll('.drop-q').forEach(zone => {
+    returnChip(zone.dataset.current);
+    zone.dataset.current = '';
+    zone.childNodes[0].textContent = 'drag question here ';
+    zone.classList.remove('filled', 'ans-ok', 'ans-no', 'over');
+  });
+  document.querySelectorAll('.match-input').forEach(i => {
+    i.value = '';
+    i.classList.remove('ans-ok', 'ans-no');
+  });
+  document.querySelectorAll('.q-chip').forEach(c => c.classList.remove('used'));
+  document.getElementById('score-panel').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
